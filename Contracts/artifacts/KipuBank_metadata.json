@@ -22,17 +22,55 @@
 				"type": "constructor"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "remainBankCap",
+						"type": "uint256"
+					}
+				],
 				"name": "ExceedsBankCap",
 				"type": "error"
 			},
 			{
-				"inputs": [],
-				"name": "ExceedsThresholdWithdrawl",
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "thresholdWithdrawl",
+						"type": "uint256"
+					}
+				],
+				"name": "ExceedsWithdrawlThreshold",
 				"type": "error"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "vaultBalance",
+						"type": "uint256"
+					}
+				],
 				"name": "InsufficientVaultBalance",
 				"type": "error"
 			},
@@ -48,14 +86,64 @@
 			},
 			{
 				"anonymous": false,
-				"inputs": [],
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "depositAmount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newVaultBalance",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newtotalDeposits",
+						"type": "uint256"
+					}
+				],
 				"name": "NewDeposit",
 				"type": "event"
 			},
 			{
 				"anonymous": false,
-				"inputs": [],
-				"name": "NewWithdrawal",
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "withdrawAmount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newVaultBalance",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newtotalDeposits",
+						"type": "uint256"
+					}
+				],
+				"name": "NewWithdraw",
 				"type": "event"
 			},
 			{
@@ -92,7 +180,13 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
 				"name": "getVaultBalance",
 				"outputs": [
 					{
@@ -138,7 +232,7 @@
 						"type": "address"
 					}
 				],
-				"name": "vault",
+				"name": "vaults",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -150,7 +244,13 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
 				"name": "withdraw",
 				"outputs": [],
 				"stateMutability": "nonpayable",
@@ -199,11 +299,11 @@
 	},
 	"sources": {
 		"Contracts/KipuBank.sol": {
-			"keccak256": "0xbed94aec56202ad80ded4e1422a6bb437923d21b93318c33879430e89dedaf45",
+			"keccak256": "0x55153a9db2dd91fb7c0403a82bf96e734e672c11e112745665c4f4663cf47aae",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://ff7e6832453a249b220c700058d4b3ff52c13b0523722262e29adf98e51d084c",
-				"dweb:/ipfs/QmUKqDmtMWB6ccmRTeSksYuiVMu3AEL5JHfJ4i1iMS7Ga8"
+				"bzz-raw://257ada2e1d410d688aa955c333e8fcbbe2f24a8a15c613b24171bb53cbbdaa6b",
+				"dweb:/ipfs/QmUAhU2xeW28YsnG5jN3UFc7j77WG2qZqjWpBubsd41pwH"
 			]
 		}
 	},

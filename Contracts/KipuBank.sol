@@ -26,18 +26,31 @@ contract KipuBank {
     error ZeroAmountNotAllowed();
 
     // ============== EVENTS ==============
-    event NewDeposit(
+    event SuccessDeposit(
         address indexed user,
         uint256 depositAmount,
         uint256 newVaultBalance,
         uint256 newtotalDeposits
     );
-    event NewWithdraw(
+    event SuccessWithdraw(
         address indexed user,
         uint256 withdrawAmount,
         uint256 newVaultBalance,
         uint256 newtotalDeposits
     );
+
+    event FailedDeposit (
+        address indexed user,
+        string reason,
+        uint256 amoun
+    );
+
+    event FailedWithdrawl(
+        address indexed user,
+        string reason,
+        uint256 amoun
+    );
+
 
     // ============== CONSTRUCTOR ==============
     constructor(uint256 _bankCap, uint256 _thresholdWithdrawl) {
@@ -52,15 +65,16 @@ contract KipuBank {
     // ============== MODDIFIERS ==============
     modifier checkBankCap(uint256 amount){
         if (totalDeposits + amount > bankCap){
+            emit FailedDeposit (
+                msg.sender, 
+                "ExceedsBankCap", 
+                amount
+            );
             revert ExceedsBankCap(amount, bankCap - totalDeposits);
         }  
         _;
     }
 
-    modifier validAmount(uint256 amount){
-        if (amount == 0) revert ZeroAmountNotAllowed();
-        _;
-    }
 
     // ============== FUNCTIONS ==============
     // ---- Main ----
@@ -70,9 +84,13 @@ contract KipuBank {
      * @custom modifier validAmount for deposits of 0 ETH
      * @custom modifier checkBankCap for the global total bank cap
      */
-    function deposit() external payable validAmount(msg.value) checkBankCap(msg.value) {
+    function deposit() external payable checkBankCap(msg.value) {
+        if (msg.value == 0){
+            emit FailedDeposit(msg.sender, "ZeroAmountNotAll", 0);
+            revert ZeroAmountNotAllowed();
+        }
         _processDeposit(msg.sender, msg.value);
-        emit NewDeposit(
+        emit SuccessDeposit(
             msg.sender,
             msg.value,
             vaults[msg.sender],
@@ -84,13 +102,31 @@ contract KipuBank {
      * @notice Withdraw ETH from the user vault
      * @dev Check for a valid amount, max threshold for each withdraw and
         vault balance before pocress
-     * @param amount Desire wei to withdraw from user vault
+     * @param Desire mmount in wei to withdraw from user vault
      */
-    function withdraw(uint256 amount) external validAmount(amount) {
-        if (amount > thresholdWithdrawl) revert ExceedsWithdrawlThreshold(amount, thresholdWithdrawl); 
-        if (amount > vaults[msg.sender]) revert InsufficientVaultBalance(msg.sender, amount, vaults[msg.sender]);
+    function withdraw(uint256 amount) external {
+        if (amount == 0){
+            emit FailedWithdrawl(msg.sender, "ZeroAmountNotAll", 0);
+            revert ZeroAmountNotAllowed();
+        }
+        if (amount > thresholdWithdrawl) {
+            emit FailedWithdrawl(
+                msg.sender,
+                "ExceedsWithdrawlThreshold",
+                amount
+            );
+            revert ExceedsWithdrawlThreshold(amount, thresholdWithdrawl); 
+        }
+        if (amount > vaults[msg.sender]){
+            emit FailedWithdrawl(
+                msg.sender,
+                "InsufficientVaultBalance",
+                amount
+            );
+            revert InsufficientVaultBalance(msg.sender, amount, vaults[msg.sender]);
+        }
         _processWithdraw(msg.sender, amount);
-        emit NewWithdraw(
+        emit SuccessWithdraw(
             msg.sender,
             amount,
             vaults[msg.sender],
@@ -124,10 +160,10 @@ contract KipuBank {
 
     // ---- Aux ----
     /*
-     * @notice 
-     * @dev 
-     * @param
-     * @return
+     * @notice View vault balance from user
+     * @dev View function
+     * @param Address from the user
+     * @return Vault balance in wei
      */
     function getVaultBalance(address _user) external view returns (uint256) {
         return vaults[_user];

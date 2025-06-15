@@ -95,6 +95,56 @@
 					},
 					{
 						"indexed": false,
+						"internalType": "string",
+						"name": "reason",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amoun",
+						"type": "uint256"
+					}
+				],
+				"name": "FailedDeposit",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "reason",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amoun",
+						"type": "uint256"
+					}
+				],
+				"name": "FailedWithdrawl",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
 						"internalType": "uint256",
 						"name": "depositAmount",
 						"type": "uint256"
@@ -112,7 +162,7 @@
 						"type": "uint256"
 					}
 				],
-				"name": "NewDeposit",
+				"name": "SuccessDeposit",
 				"type": "event"
 			},
 			{
@@ -143,7 +193,7 @@
 						"type": "uint256"
 					}
 				],
-				"name": "NewWithdraw",
+				"name": "SuccessWithdraw",
 				"type": "event"
 			},
 			{
@@ -299,11 +349,11 @@
 	},
 	"sources": {
 		"Contracts/KipuBank.sol": {
-			"keccak256": "0x55153a9db2dd91fb7c0403a82bf96e734e672c11e112745665c4f4663cf47aae",
+			"keccak256": "0xb82beb328123077d9a279dc48f9c5eb8d14e8e662e9b14fbe233b27b71f6dac3",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://257ada2e1d410d688aa955c333e8fcbbe2f24a8a15c613b24171bb53cbbdaa6b",
-				"dweb:/ipfs/QmUAhU2xeW28YsnG5jN3UFc7j77WG2qZqjWpBubsd41pwH"
+				"bzz-raw://5b2eec7b288423f34991ceae03ec5acc831631f0b95caae430ab88600669fa8a",
+				"dweb:/ipfs/QmZX9xSx3Q8rXqpdGEYSY5vwPQxEdeM2C76F66ViP1WqZQ"
 			]
 		}
 	},

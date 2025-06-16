@@ -82,10 +82,9 @@ A secure vault system for ETH deposits and controlled withdrawals with configura
 | `FailedDeposit`      | Emitted on failed deposit attempts   |
 | `FailedWithdrawal`   | Emitted on failed withdrawal attempts|
 
-## Security Considerations
-- Withdrawals are limited per transaction
-- Contract owner cannot access user funds
-- All parameters are immutable after deployment
+## Example of a deployment
+Go to [Deploy contract](https://sepolia.etherscan.io/address/0x12961d79a1febCaB9636265CeCbe05b0f81Bc6B7#readContract), or just search fot these contract address: `0x12961d79a1febCaB9636265CeCbe05b0f81Bc6B7` on Sepolia Etherscan.
 
 ## License
 MIT License - See [LICENSE](LICENSE) for details
+

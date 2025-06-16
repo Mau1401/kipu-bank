@@ -7,60 +7,60 @@ pragma solidity 0.8.30;
 contract KipuBank {
     // ============== STATE VARS ==============
 
-    /*
+    /**
      * @notice Max limit in wei that the contract accept.
      * @dev Set in the constructor and cannot be change.
      */
     uint256 public immutable bankCap;
     
-    /*
+    /**
      * @notice Max limit in wei that can be withdraw by one user in each transacction.
      * @dev Set in the constructor and cannot be change.
      */
-    uint256 public immutable thresholdWithdrawl;
+    uint256 public immutable thresholdWithdrawal;
      
-    /*
+    /**
      * @notice Total balance deposit from all user in wei.  
-     * @dev Update in each deposit and withrdraw.
+     * @dev Update in each deposit and withdraw.
      */
     uint256 public totalDeposits;
 
-    /*
+    /**
      * @notice Deposits operations counter.  
      * @dev Update in each success deposit.
      */
     uint256 public depositCount;
 
-    /*
+    /**
      * @notice Withdrawals operations counter.  
-     * @dev Update in each success withrdrawal.
+     * @dev Update in each success withdrawal.
      */
     uint256 public withdrawalCount;
 
     // ============== Mappings ==============
-    /*
+    /**
      * @notice User mapping to balance in vaults.  
      * @dev Balance only update in success deposits or withrawlas.
      */
     mapping(address => uint256) public vaults;
 
     // ============== ERRORS ==============
-    /*
+    /**
      * @notice Error reverts transacction when deposit amount exceeds global bank cap.  
      * @param amount in wei trying to deposit by user.
      * @param remainBankCap Remaining bank capacity in wei.
      */
     error ExceedsBankCap(uint256 amount, uint256 remainBankCap); 
     
-    /*
+    /**
      * @notice Error reverts transacction when amount to withdraw exceeds 
-       `thresholdWithdrawl` state var.  
+       `thresholdWithdrawal` state var.  
      * @param amount in wei trying to withdraw by user.
-     * @param thresholdWithdrawl Current config state var value.
+     * @param thresholdWithdrawal Current config state var value.
      */
-    error ExceedsWithdrawlThreshold(uint256 amount, uint256 thresholdWithdrawl);
+    error ExceedsWithdrawlThreshold(uint256 amount, uint256 thresholdWithdrawal);
 
-    /*
+    /**
      * @notice Error reverts transacction when withdrawal amount exceeds user vault balance.  
      * @param user Address from user.
      * @param amount in wei trying to withdraw by user.
@@ -68,13 +68,13 @@ contract KipuBank {
      */
     error InsufficientVaultBalance(address user, uint256 amount, uint256 vaultBalance);
     
-    /*
-     * @notice Error reverts deploy when `thresholdWithdrawl` > `bankCap`.
+    /**
+     * @notice Error reverts deploy when `thresholdWithdrawal` > `bankCap`.
      * @dev Avoid wrong contract config.
      */
     error InvalidThreshold();
 
-    /*
+    /**
      * @notice Error reverts when amount is cero.
      * @dev Avoid deposit/withdraw without value.
      */
@@ -82,7 +82,7 @@ contract KipuBank {
 
     // ============== EVENTS ==============
 
-    /*
+    /**
      * @notice Emit on a successful deposits.  
      * @param user Address from user.
      * @param depositAmount Amount deposited in wei.
@@ -96,7 +96,7 @@ contract KipuBank {
         uint256 newtotalDeposits
     );
 
-    /*
+    /**
      * @notice Emit on a successful withdraw.  
      * @param user Address from user.
      * @param withdrawAmount Amount withdrawal in wei.
@@ -110,7 +110,7 @@ contract KipuBank {
         uint256 newtotalDeposits
     );
 
-    /*
+    /**
      * @notice Emit on a failed deposit
      * @param user Address from user.
      * @param reason Reason for error.
@@ -122,7 +122,7 @@ contract KipuBank {
         uint256 amount
     );
 
-    /*
+    /**
      * @notice Emit on a failed withdraw
      * @param user Address from user.
      * @param reason Reason for error.
@@ -131,27 +131,27 @@ contract KipuBank {
     event FailedWithdrawl(
         address indexed user,
         string reason,
-        uint256 amout
+        uint256 amount
     );
 
 
     // ============== CONSTRUCTOR ==============
-    /*
+    /**
      * @notice Initialize contract with bank cap and threshold withdrawl. 
      * @param _bankCap Max total in wei for the contract.
-     * @param _thresholdWithdrawl Max in wei a user can withdraw in one transaction.
+     * @param _thresholdWithdrawal Max in wei a user can withdraw in one transaction.
      * @custom:error ZeroAmountNotAllowed
      * @custom:error InvalidThreshold
      */
-    constructor(uint256 _bankCap, uint256 _thresholdWithdrawl) {
-        if (_bankCap == 0 || _thresholdWithdrawl == 0 ) revert ZeroAmountNotAllowed();
-        if (_bankCap < _thresholdWithdrawl) revert InvalidThreshold();
+    constructor(uint256 _bankCap, uint256 _thresholdWithdrawal) {
+        if (_bankCap == 0 || _thresholdWithdrawal == 0 ) revert ZeroAmountNotAllowed();
+        if (_bankCap < _thresholdWithdrawal) revert InvalidThreshold();
         bankCap = _bankCap;
-        thresholdWithdrawl = _thresholdWithdrawl;
+        thresholdWithdrawal = _thresholdWithdrawal;
     }
 
-    // ============== MODDIFIERS ==============
-    /*
+    // ============== MODIFIERS ==============
+    /**
      * @notice Check that a deposit don't exceed global bank cap.
      * @dev revert with ExceedsBankCap.
      * @param amount The deposit amount (in wei) to check against remaining capacity.
@@ -173,17 +173,17 @@ contract KipuBank {
 
     // ============== FUNCTIONS ==============
 
-     /*
-     * @notice Deposit ETH in the user vault 
-     * @dev Check for the a valid amount and global bank cap before process
+    /**
+     * @notice Deposit ETH in the user vault. 
+     * @dev Check for the a valid amount and global bank cap before process.
      * @custom:event FailedDeposit.
      * @custom:event SuccessDeposit.
-     * @custom:modifier checkBankCap for the global total bank cap
+     * @custom:modifier checkBankCap for the global total bank cap.
      * @custom:error ZeroAmountNotAllowed.
      */
     function deposit() external payable checkBankCap(msg.value) {
         if (msg.value == 0){
-            emit FailedDeposit(msg.sender, "ZeroAmountNotAll", 0);
+            emit FailedDeposit(msg.sender, "ZeroAmountNotAllwed", 0);
             revert ZeroAmountNotAllowed();
         }
         _processDeposit(msg.sender, msg.value);
@@ -195,29 +195,28 @@ contract KipuBank {
         );
     }
 
-    /*
-     * @notice Withdraw ETH from the user's vault
-     * @dev Check for a valid amount, max threshold for each withdraw and
-        vault balance before pocressing.
-     * @param Desire mmount in wei to withdraw from user vault
-     * @custom:event FailedWithdrawal
-     * @custom:event SuccessWithdrawal
-     * @custom:error ZeroAmountNotAllowed
-     * @custom:error ExceedsWithdrawalThreshold
-     * @custom:error InsufficientVaultBalance
-     */
+    /**
+     * @notice Withdraw ETH from the user's vault.
+     * @dev Check for a valid amount, max threshold for each withdraw and vault balance before pocressing.
+     * @param amount Desire mmount in wei to withdraw from user vault.
+     * @custom:event FailedWithdrawal.
+     * @custom:event SuccessWithdrawal.
+     * @custom:error ZeroAmountNotAllowed.
+     * @custom:error ExceedsWithdrawalThreshold.
+     * @custom:error InsufficientVaultBalance.
+     */ 
     function withdraw(uint256 amount) external {
         if (amount == 0){
             emit FailedWithdrawl(msg.sender, "ZeroAmountNotAll", 0);
             revert ZeroAmountNotAllowed();
         }
-        if (amount > thresholdWithdrawl) {
+        if (amount > thresholdWithdrawal) {
             emit FailedWithdrawl(
                 msg.sender,
-                "ExceedsWithdrawlThreshold",
+                "ExceedsWithdrawalThreshold",
                 amount
             );
-            revert ExceedsWithdrawlThreshold(amount, thresholdWithdrawl); 
+            revert ExceedsWithdrawlThreshold(amount, thresholdWithdrawal); 
         }
         if (amount > vaults[msg.sender]){
             emit FailedWithdrawl(
@@ -236,11 +235,11 @@ contract KipuBank {
         );
     }
 
-    /*
-     * @notice Process the interal logic from a deposit
-     * @dev Update balances and counters. Only call from `deposit()`
-     * @param user Address from user
-     * @param amount in Wei to deposit in user vault
+    /**
+     * @notice Process the interal logic from a deposit.
+     * @dev Update balances and counters. Only call from `deposit()`.
+     * @param _user Address from user.
+     * @param _amount in Wei to deposit in user vault.
      */
     function _processDeposit(address _user, uint256 _amount) private {
         vaults[_user] += _amount;
@@ -248,11 +247,11 @@ contract KipuBank {
         depositCount++;
     } 
 
-    /*
-     * @notice Process the interal logic from a widthdraw
-     * @dev Update balances and counters. Only call from `withdraw()`
-     * @param user Address from user
-     * @param Widthdraw amount in Wei
+    /**
+     * @notice Process the interal logic from a widthdraw.
+     * @dev Update balances and counters. Only call from `withdraw()`.
+     * @param _user Address from user.
+     * @param _amount Widthdraw amount in Wei.
      */
     function _processWithdraw(address _user, uint256 _amount) private {
         vaults[_user] -= _amount;
@@ -261,11 +260,11 @@ contract KipuBank {
     }
 
     // ============== AUX FUNCTIONS ==============
-    /*
-     * @notice View vault balance from user
-     * @dev View function
-     * @param Address from the user
-     * @return Vault balance in wei
+    /**
+     * @notice View vault balance from user.
+     * @dev View function.
+     * @param _user Address from the user.
+     * @return Vault balance from user address in wei.
      */
     function getVaultBalance(address _user) external view returns (uint256) {
         return vaults[_user];

@@ -14,7 +14,7 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "_thresholdWithdrawl",
+						"name": "_thresholdWithdrawal",
 						"type": "uint256"
 					}
 				],
@@ -46,7 +46,7 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "thresholdWithdrawl",
+						"name": "thresholdWithdrawal",
 						"type": "uint256"
 					}
 				],
@@ -127,7 +127,7 @@
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "amout",
+						"name": "amount",
 						"type": "uint256"
 					}
 				],
@@ -250,7 +250,7 @@
 			},
 			{
 				"inputs": [],
-				"name": "thresholdWithdrawl",
+				"name": "thresholdWithdrawal",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -321,14 +321,206 @@
 			}
 		],
 		"devdoc": {
+			"errors": {
+				"ExceedsBankCap(uint256,uint256)": [
+					{
+						"params": {
+							"amount": "in wei trying to deposit by user.",
+							"remainBankCap": "Remaining bank capacity in wei."
+						}
+					}
+				],
+				"ExceedsWithdrawlThreshold(uint256,uint256)": [
+					{
+						"params": {
+							"amount": "in wei trying to withdraw by user.",
+							"thresholdWithdrawal": "Current config state var value."
+						}
+					}
+				],
+				"InsufficientVaultBalance(address,uint256,uint256)": [
+					{
+						"params": {
+							"amount": "in wei trying to withdraw by user.",
+							"user": "Address from user.",
+							"vaultBalance": "Current user vault balance."
+						}
+					}
+				],
+				"InvalidThreshold()": [
+					{
+						"details": "Avoid wrong contract config."
+					}
+				],
+				"ZeroAmountNotAllowed()": [
+					{
+						"details": "Avoid deposit/withdraw without value."
+					}
+				]
+			},
+			"events": {
+				"FailedDeposit(address,string,uint256)": {
+					"params": {
+						"amount": "Attempted amountin wei.",
+						"reason": "Reason for error.",
+						"user": "Address from user."
+					}
+				},
+				"FailedWithdrawl(address,string,uint256)": {
+					"params": {
+						"amount": "Attempted amountin wei.",
+						"reason": "Reason for error.",
+						"user": "Address from user."
+					}
+				},
+				"SuccessDeposit(address,uint256,uint256,uint256)": {
+					"params": {
+						"depositAmount": "Amount deposited in wei.",
+						"newVaultBalance": "Updated user vualt balance after deposit in wei.",
+						"newtotalDeposits": "Updated global total after deposit in wei.",
+						"user": "Address from user."
+					}
+				},
+				"SuccessWithdraw(address,uint256,uint256,uint256)": {
+					"params": {
+						"newVaultBalance": "Updated user vualt balance after withdraw in wei.",
+						"newtotalDeposits": "Updated global total after withdraw in wei.",
+						"user": "Address from user.",
+						"withdrawAmount": "Amount withdrawal in wei."
+					}
+				}
+			},
 			"kind": "dev",
-			"methods": {},
+			"methods": {
+				"constructor": {
+					"custom:error": "ZeroAmountNotAllowedInvalidThreshold",
+					"params": {
+						"_bankCap": "Max total in wei for the contract.",
+						"_thresholdWithdrawal": "Max in wei a user can withdraw in one transaction."
+					}
+				},
+				"deposit()": {
+					"custom:error": "ZeroAmountNotAllowed.",
+					"custom:event": "FailedDeposit.SuccessDeposit.",
+					"custom:modifier": "checkBankCap for the global total bank cap.",
+					"details": "Check for the a valid amount and global bank cap before process."
+				},
+				"getVaultBalance(address)": {
+					"details": "View function.",
+					"params": {
+						"_user": "Address from the user."
+					},
+					"returns": {
+						"_0": "Vault balance from user address in wei."
+					}
+				},
+				"withdraw(uint256)": {
+					"custom:error": "ZeroAmountNotAllowed.ExceedsWithdrawalThreshold.InsufficientVaultBalance.",
+					"custom:event": "FailedWithdrawal.SuccessWithdrawal.",
+					"details": "Check for a valid amount, max threshold for each withdraw and vault balance before pocressing.",
+					"params": {
+						"amount": "Desire mmount in wei to withdraw from user vault."
+					}
+				}
+			},
+			"stateVariables": {
+				"bankCap": {
+					"details": "Set in the constructor and cannot be change."
+				},
+				"depositCount": {
+					"details": "Update in each success deposit."
+				},
+				"thresholdWithdrawal": {
+					"details": "Set in the constructor and cannot be change."
+				},
+				"totalDeposits": {
+					"details": "Update in each deposit and withdraw."
+				},
+				"vaults": {
+					"details": "Balance only update in success deposits or withrawlas."
+				},
+				"withdrawalCount": {
+					"details": "Update in each success withdrawal."
+				}
+			},
 			"title": "KIPU bank contract",
 			"version": 1
 		},
 		"userdoc": {
+			"errors": {
+				"ExceedsBankCap(uint256,uint256)": [
+					{
+						"notice": "Error reverts transacction when deposit amount exceeds global bank cap.  "
+					}
+				],
+				"ExceedsWithdrawlThreshold(uint256,uint256)": [
+					{
+						"notice": "Error reverts transacction when amount to withdraw exceeds  `thresholdWithdrawal` state var.  "
+					}
+				],
+				"InsufficientVaultBalance(address,uint256,uint256)": [
+					{
+						"notice": "Error reverts transacction when withdrawal amount exceeds user vault balance.  "
+					}
+				],
+				"InvalidThreshold()": [
+					{
+						"notice": "Error reverts deploy when `thresholdWithdrawal` > `bankCap`."
+					}
+				],
+				"ZeroAmountNotAllowed()": [
+					{
+						"notice": "Error reverts when amount is cero."
+					}
+				]
+			},
+			"events": {
+				"FailedDeposit(address,string,uint256)": {
+					"notice": "Emit on a failed deposit"
+				},
+				"FailedWithdrawl(address,string,uint256)": {
+					"notice": "Emit on a failed withdraw"
+				},
+				"SuccessDeposit(address,uint256,uint256,uint256)": {
+					"notice": "Emit on a successful deposits.  "
+				},
+				"SuccessWithdraw(address,uint256,uint256,uint256)": {
+					"notice": "Emit on a successful withdraw.  "
+				}
+			},
 			"kind": "user",
-			"methods": {},
+			"methods": {
+				"bankCap()": {
+					"notice": "Max limit in wei that the contract accept."
+				},
+				"constructor": {
+					"notice": "Initialize contract with bank cap and threshold withdrawl. "
+				},
+				"deposit()": {
+					"notice": "Deposit ETH in the user vault. "
+				},
+				"depositCount()": {
+					"notice": "Deposits operations counter.  "
+				},
+				"getVaultBalance(address)": {
+					"notice": "View vault balance from user."
+				},
+				"thresholdWithdrawal()": {
+					"notice": "Max limit in wei that can be withdraw by one user in each transacction."
+				},
+				"totalDeposits()": {
+					"notice": "Total balance deposit from all user in wei.  "
+				},
+				"vaults(address)": {
+					"notice": "User mapping to balance in vaults.  "
+				},
+				"withdraw(uint256)": {
+					"notice": "Withdraw ETH from the user's vault."
+				},
+				"withdrawalCount()": {
+					"notice": "Withdrawals operations counter.  "
+				}
+			},
 			"version": 1
 		}
 	},
@@ -349,11 +541,11 @@
 	},
 	"sources": {
 		"Contracts/KipuBank.sol": {
-			"keccak256": "0x1fc926f4449202926d8318bd7551e60cb4fdc4523ee1822c86b3650d74a69d59",
+			"keccak256": "0x01a274d8b7e9d576466e74bc99910fc93a4f2333ffc8559466737e01a74afc44",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://06014236472bf50179e334f5aad329fc489f83656cc4304119b9468165d419f3",
-				"dweb:/ipfs/QmSeMmJnX5kHNktbUWaKQBMrr54aBB9HFw7yivohGpMoxn"
+				"bzz-raw://7c4b059cf9b9b74d17528447b40dc24f42370597b2ff596318f52a0fde4af18d",
+				"dweb:/ipfs/QmccJKgkLRz68ysmRaGbypVBtX3Kj7Smwn1qj7SmkGyRnP"
 			]
 		}
 	},

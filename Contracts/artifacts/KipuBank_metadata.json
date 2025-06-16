@@ -102,7 +102,7 @@
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "amoun",
+						"name": "amount",
 						"type": "uint256"
 					}
 				],
@@ -127,7 +127,7 @@
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "amoun",
+						"name": "amout",
 						"type": "uint256"
 					}
 				],
@@ -349,11 +349,11 @@
 	},
 	"sources": {
 		"Contracts/KipuBank.sol": {
-			"keccak256": "0xb82beb328123077d9a279dc48f9c5eb8d14e8e662e9b14fbe233b27b71f6dac3",
+			"keccak256": "0x1fc926f4449202926d8318bd7551e60cb4fdc4523ee1822c86b3650d74a69d59",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5b2eec7b288423f34991ceae03ec5acc831631f0b95caae430ab88600669fa8a",
-				"dweb:/ipfs/QmZX9xSx3Q8rXqpdGEYSY5vwPQxEdeM2C76F66ViP1WqZQ"
+				"bzz-raw://06014236472bf50179e334f5aad329fc489f83656cc4304119b9468165d419f3",
+				"dweb:/ipfs/QmSeMmJnX5kHNktbUWaKQBMrr54aBB9HFw7yivohGpMoxn"
 			]
 		}
 	},

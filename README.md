@@ -1,7 +1,7 @@
 # KipuBank Smart Contract
 
 ![Solidity](https://img.shields.io/badge/Solidity-0.8.30-informational) 
-![License](https://img.shields.io/badge/License-MIT-blue)
+
 
 A secure vault system for ETH deposits and controlled withdrawals with configurable limits.
 
